@@ -54,7 +54,7 @@ class M_popup extends CI_Model {
 		}else if($arract[0]=="mst_organisasi"){
 			$judul = "ORGANISASI";
 			if($KD_GROUP != "SPA"){
-				$addsql .= " AND ID = ".$this->db->escape($KD_ORG);
+				$addsql .= " AND KD_ORG = ".$this->db->escape($KD_ORG);
 			}
 			if($arract[1]!=""){
 				$addsql .= " AND KD_TIPE_ORGANISASI = ".$this->db->escape($arract[1]);
