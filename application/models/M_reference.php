@@ -58,6 +58,9 @@ class M_reference extends CI_Model {
 		$this->newtable->breadcrumb('Reference', 'javascript:void(0)','');
 		$this->newtable->breadcrumb('Organisasi', 'javascript:void(0)','');
 		$check = (grant()=="W")?true:false;
+		if($KD_GROUP != "SPA") {
+			$addsql .= " AND A.KD_ORG = ".$this->db->escape($this->session->userdata('KD_ORGANISASI'));
+		}
 		$SQL = "SELECT A.NPWP, A.NAMA, A.ALAMAT, A.NOTELP AS 'TELP', A.NOFAX AS 'FAX', A.EMAIL, A.ID 
 				FROM t_organisasi A
 				WHERE 1=1".$addsql;
