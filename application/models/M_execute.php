@@ -51,7 +51,7 @@ class M_execute extends CI_Model {
 			break;
 			case 'cons' :
 				if($uraian!=""){
-					$SQL = "SELECT ID, NAMA FROM t_organisasi
+					$SQL = "SELECT ID, NAMA, NPWP FROM t_organisasi
 							WHERE NPWP = ".$this->db->escape(trim($kode))." OR NAMA = ".$this->db->escape(trim($uraian));
 					$result = $func->main->get_result($SQL);
 					if($result){
@@ -171,6 +171,7 @@ class M_execute extends CI_Model {
 		$KD_TPS = $this->session->userdata('KD_TPS');
 		$KD_GUDANG = $this->session->userdata('KD_GUDANG');
 		$KD_KPBC = $this->session->userdata('KD_KPBC');
+        $KD_ORGANISASI = $this->session->userdata('KD_ORGANISASI');
 		$error = 0;
 		if($type=="save"){
 			if($act=="kapal"){
@@ -505,6 +506,7 @@ class M_execute extends CI_Model {
 							'NAMA' 					=> strtoupper($this->input->post('CONSIGNEE')),
 							'KD_TIPE_ORGANISASI' 	=> 'CONS',
 							'NPWP' 					=> strtoupper($this->input->post('ID_CONSIGNEE')),
+							'KD_ORG' 				=> $KD_ORGANISASI,
 						);
 						$this->db->insert('t_organisasi', $data_cons);
 						$DATA['KD_ORG_CONSIGNEE'] = $this->db->insert_id();
@@ -819,14 +821,33 @@ class M_execute extends CI_Model {
 				$DATA['KD_PEL_MUAT'] = $this->get_referensi('port',$DATA['KD_PEL_MUAT'],$this->input->post('PELABUHAN_MUAT'));
 				$DATA['KD_PEL_TRANSIT'] = $this->get_referensi('port',$DATA['KD_PEL_TRANSIT'],$this->input->post('PELABUHAN_TRANSIT'));
 				$DATA['KD_PEL_BONGKAR'] = $this->get_referensi('port',$DATA['KD_PEL_BONGKAR'],$this->input->post('PELABUHAN_BONGKAR'));
-				$DATA['KD_ORG_CONSIGNEE'] = $this->get_referensi('cons',$DATA['KD_ORG_CONSIGNEE'],$this->input->post('CONSIGNEE'));
 				$DATA['TGL_MASTER_BL_AWB'] = validate($DATA['TGL_MASTER_BL_AWB'],'DATE');
 				$DATA['TGL_BL_AWB'] = validate($DATA['TGL_BL_AWB'],'DATE');
 				$DATA['TGL_DOK_IN'] = validate($DATA['TGL_DOK_IN'],'DATE');
 				$DATA['TGL_SEGEL_BC'] = validate($DATA['TGL_SEGEL_BC'],'DATE');
 				$DATA['WK_IN'] = validate($DATA['WK_IN'],'DATETIME');
 				$DATA['KD_SARANA_ANGKUT_IN'] = '1';
-
+				if ($this->input->post('ID_CONSIGNEE')!='') {
+					$SQL_CONS = "SELECT ID, NAMA, NPWP FROM t_organisasi
+								 WHERE KD_TIPE_ORGANISASI = 'CONS'
+								 AND NPWP = ".$this->db->escape(trim(strtoupper($this->input->post('ID_CONSIGNEE'))));
+					$result_cons = $func->main->get_result($SQL_CONS);
+					if($result_cons){
+						foreach($SQL_CONS->result_array() as $row => $value){
+							$arr_cons = $value;
+						}
+						$DATA['KD_ORG_CONSIGNEE'] = $arr_cons['ID'];
+					}else{
+						$data_cons = array(
+							'NAMA' 					=> strtoupper($this->input->post('CONSIGNEE')),
+							'KD_TIPE_ORGANISASI' 	=> 'CONS',
+							'NPWP' 					=> strtoupper($this->input->post('ID_CONSIGNEE')),
+							'KD_ORG' 				=> $KD_ORGANISASI,
+						);
+						$this->db->insert('t_organisasi', $data_cons);
+						$DATA['KD_ORG_CONSIGNEE'] = $this->db->insert_id();
+					}
+				}
 				$this->db->where(array('ID' => $arrid[0],'SERI' => $arrid[1]));
 				$exec = $this->db->update('t_cocostskms',$DATA);
 				if(!$exec){
@@ -2735,18 +2756,27 @@ class M_execute extends CI_Model {
 			if($arrid[1]!=""){
 				$addsql .= " AND A.SERI = ".$this->db->escape($arrid[1]);
 			}
-			$SQL = "SELECT A.*, func_name(A.KD_KEMASAN,'KEMASAN') AS KEMASAN, func_name(A.KD_DOK_IN,'DOK_BC') AS NAMA_DOK_IN,
-					func_name(A.KD_PEL_MUAT,'PORT') AS PEL_MUAT, func_name(A.KD_PEL_TRANSIT,'PORT') AS PEL_TRANSIT, 
-					func_name(A.KD_PEL_BONGKAR,'PORT') AS PEL_BONGKAR, B.NAMA AS CONSIGNEE, DATE_FORMAT(A.WK_IN,'%d-%m-%Y %H:%i:%s') AS WK_IN,
-					func_name(A.KD_DOK_IN,'DOK_BC') AS DOK_IN, DATE_FORMAT(A.TGL_MASTER_BL_AWB,'%d-%m-%Y') AS TGL_MASTER_BL_AWB,
-					DATE_FORMAT(A.TGL_BL_AWB,'%d-%m-%Y') AS TGL_BL_AWB, DATE_FORMAT(A.TGL_DOK_IN,'%d-%m-%Y') AS TGL_DOK_IN,
-					DATE_FORMAT(A.WK_OUT,'%d-%m-%Y %H:%i:%s') AS WK_OUT, func_name(A.KD_DOK_OUT,'DOK_BC') AS DOK_OUT,
-					DATE_FORMAT(A.TGL_DOK_OUT,'%d-%m-%Y') AS TGL_DOK_OUT, DATE_FORMAT(A.TGL_DAFTAR_PABEAN,'%d-%m-%Y') AS TGL_DAFTAR_PABEAN,
-					DATE_FORMAT(A.TGL_SEGEL_BC,'%d-%m-%Y') AS TGL_SEGEL_BC, DATE_FORMAT(A.TGL_IJIN_TPS,'%d-%m-%Y') AS TGL_IJIN_TPS,
+			$SQL = "SELECT A.*, B.NAMA AS CONSIGNEE, B.NPWP AS ID_CONSIGNEE,
+					DATE_FORMAT(A.WK_IN,'%d-%m-%Y %H:%i:%s') AS WK_IN,  
+					DATE_FORMAT(A.TGL_MASTER_BL_AWB,'%d-%m-%Y') AS TGL_MASTER_BL_AWB,
+					DATE_FORMAT(A.TGL_BL_AWB,'%d-%m-%Y') AS TGL_BL_AWB, 
+					DATE_FORMAT(A.TGL_DOK_IN,'%d-%m-%Y') AS TGL_DOK_IN,
+					DATE_FORMAT(A.WK_OUT,'%d-%m-%Y %H:%i:%s') AS WK_OUT, 
+					DATE_FORMAT(A.TGL_DOK_OUT,'%d-%m-%Y') AS TGL_DOK_OUT, 
+					DATE_FORMAT(A.TGL_DAFTAR_PABEAN,'%d-%m-%Y') AS TGL_DAFTAR_PABEAN,
+					DATE_FORMAT(A.TGL_SEGEL_BC,'%d-%m-%Y') AS TGL_SEGEL_BC, 
+					DATE_FORMAT(A.TGL_IJIN_TPS,'%d-%m-%Y') AS TGL_IJIN_TPS,
 					DATE_FORMAT(A.WK_REKAM,'%d-%m-%Y %H:%i:%s') AS TGL_REKAM,
 					func_name(A.KD_CONT_STATUS_IN,'CONT_STATUS') AS CONT_STATUS_IN, 
 					func_name(A.KD_SARANA_ANGKUT_IN,'SARANA_ANGKUT') AS SARANA_ANGKUT_IN,  
 					func_name(A.KD_CONT_STATUS_OUT,'CONT_STATUS') AS CONT_STATUS_OUT,
+					func_name(A.KD_DOK_OUT,'DOK_BC') AS DOK_OUT,
+					func_name(A.KD_KEMASAN,'KEMASAN') AS KEMASAN,
+					func_name(A.KD_DOK_IN,'DOK_BC') AS NAMA_DOK_IN,
+					func_name(A.KD_PEL_TRANSIT,'PORT') AS PEL_TRANSIT,
+					func_name(A.KD_PEL_MUAT,'PORT') AS PEL_MUAT,  
+					func_name(A.KD_PEL_BONGKAR,'PORT') AS PEL_BONGKAR,
+					func_name(A.KD_DOK_IN,'DOK_BC') AS DOK_IN,
 					func_name(A.KD_SARANA_ANGKUT_OUT,'SARANA_ANGKUT') AS SARANA_ANGKUT_OUT
 					FROM t_cocostskms A
 					LEFT JOIN t_organisasi B ON B.ID=A.KD_ORG_CONSIGNEE
@@ -2946,11 +2976,13 @@ class M_execute extends CI_Model {
 		}else if($act=="barang_kemasan"){
 			$arrid = explode("~", $id);
 			$SQL = "SELECT A.SERI, A.KD_KEMASAN, A.JUMLAH, A.BRUTO, A.CHARGE_BRUTO, A.NO_BL_AWB, 
-					DATE_FORMAT(A.TGL_BL_AWB,'%d-%m-%Y') AS TGL_BL_AWB, DATE_FORMAT(A.TGL_MASTER_BL_AWB,'%d-%m-%Y') AS TGL_MASTER_BL_AWB,
+					DATE_FORMAT(A.TGL_BL_AWB,'%d-%m-%Y') AS TGL_BL_AWB, 
+					DATE_FORMAT(A.TGL_MASTER_BL_AWB,'%d-%m-%Y') AS TGL_MASTER_BL_AWB,
 					A.NO_MASTER_BL_AWB, A.NO_POS_BC11, A.NO_SUB_POS_BC11, A.KD_ORG_CONSIGNEE, A.KD_PEL_MUAT, A.KD_PEL_TRANSIT, 
-					A.KD_PEL_BONGKAR, func_name(A.KD_PEL_MUAT,'PORT') AS PEL_MUAT, func_name(A.KD_PEL_TRANSIT,'PORT') AS PEL_TRANSIT,
+					A.KD_PEL_BONGKAR, func_name(A.KD_PEL_MUAT,'PORT') AS PEL_MUAT, 
+					func_name(A.KD_PEL_TRANSIT,'PORT') AS PEL_TRANSIT,
 					func_name(A.KD_PEL_BONGKAR,'PORT') AS PEL_BONGKAR, func_name(A.KD_KEMASAN,'KEMASAN') AS KEMASAN,
-					B.NAMA AS CONSIGNEE, A.KONDISI_IN
+					B.NAMA AS CONSIGNEE, A.KONDISI_IN, B.NPWP AS ID_CONSIGNEE
 					FROM t_repokms A
 					LEFT JOIN t_organisasi B ON B.ID=A.KD_ORG_CONSIGNEE
 					WHERE A.KD_REPOHDR = ".$this->db->escape($arrid[0])." AND SERI = ".$this->db->escape($arrid[1]);

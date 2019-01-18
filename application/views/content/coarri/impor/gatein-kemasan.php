@@ -66,13 +66,17 @@
               </div>
               <div class="form-group form-material">
                 <label class="col-sm-3 control-label">CONSIGNEE *</label>
-                <div class="col-sm-8">
+                <div class="col-sm-3">
+                  <input type="text" name="ID_CONSIGNEE" id="ID_CONSIGNEE" mandatory="yes" class="form-control" placeholder="NPWP" value="<?php echo strtoupper($arrkms['ID_CONSIGNEE']); ?>" >
+                  <div class="hint">ID CONSIGNEE/NPWP</div>
+                </div>
+                <div class="col-sm-5">
                   <input type="hidden" class="form-control" name="DATA[KD_ORG_CONSIGNEE]" id="KD_ORG_CONSIGNEE" placeholder="KODE ORG CONSIGNEE" readonly="readonly" value="<?php echo $arrkms['KD_ORG_CONSIGNEE']; ?>">
                   <input type="text" name="CONSIGNEE" id="CONSIGNEE" mandatory="yes" class="form-control" placeholder="CONSIGNEE" value="<?php echo strtoupper($arrkms['CONSIGNEE']); ?>" >
                   <div class="hint">CONSIGNEE</div>
                 </div>
                 <div class="col-sm-1">
-                  <button type="button" class="btn btn-primary btn-sm" onclick="popup_searchtwo('popup/popup_search/mst_organisasi~CONS/KD_ORG_CONSIGNEE;CONSIGNEE/2','','60','600')">
+                  <button type="button" class="btn btn-primary btn-sm" onclick="popup_searchtwo('popup/popup_search/mst_organisasi~CONS/KD_ORG_CONSIGNEE;CONSIGNEE;ID_CONSIGNEE/2','','60','600')">
                     <i class="icon md-search"></i>
                   </button>
                 </div>
@@ -223,8 +227,13 @@ $(function(){
 	autocomplete('PEL_BONGKAR','/popup/autocomplete/mst_port/nama',function(event, ui){
 		$('#KD_PEL_BONGKAR').val(ui.item.KODE);
 	});
-	autocomplete('CONSIGNEE','/popup/autocomplete/mst_organisasi/cons',function(event, ui){
+	autocomplete('CONSIGNEE','/popup/autocomplete/mst_organisasi/cons~nama',function(event, ui){
 		$('#KD_ORG_CONSIGNEE').val(ui.item.KODE);
+    $('#ID_CONSIGNEE').val(ui.item.NPWP);
 	});
+  autocomplete('ID_CONSIGNEE','/popup/autocomplete/mst_organisasi/cons~npwp',function(event, ui){
+    $('#KD_ORG_CONSIGNEE').val(ui.item.KODE);
+    $('#CONSIGNEE').val(ui.item.NAMA);
+  });
 });
 </script>

@@ -270,11 +270,13 @@ class M_popup extends CI_Model {
 			echo json_encode($arrayDataTemp);
 		}else if($type=="mst_organisasi"){
 			if (!$post) return;
-			if($act!=""){
-				$add_sql = " AND KD_TIPE_ORGANISASI = ".$this->db->escape($act);
+			
+			$arract = explode("~", $act);
+			if($act[0]!=""){
+				$add_sql = " AND KD_TIPE_ORGANISASI = ".$this->db->escape($arract[0]);
 			}
-			$SQL = "SELECT ID, NAMA FROM t_organisasi 
-					WHERE NAMA LIKE '%".$post."%'".$add_sql."
+			$SQL = "SELECT ID, NAMA,NPWP FROM t_organisasi 
+					WHERE (NAMA LIKE '%".$post."%' OR NPWP LIKE '%".$post."%')".$add_sql."
 					LIMIT 5";
 			$result = $this->db->query($SQL);
 			$banyakData = $result->num_rows();
@@ -283,7 +285,12 @@ class M_popup extends CI_Model {
 				foreach($result->result() as $row){
 					$KODE = strtoupper($row->ID);
 					$NAMA = strtoupper($row->NAMA);
-					$arrayDataTemp[] = array("value"=>$NAMA,"KODE"=>$KODE);
+					$NPWP = strtoupper($row->NPWP);
+					if($arract[1] == "nama") {
+						$arrayDataTemp[] = array("value"=>$NAMA,"KODE"=>$KODE,"NPWP"=>$NPWP);
+					} elseif($arract[1] == "npwp") {
+						$arrayDataTemp[] = array("value"=>$NPWP,"KODE"=>$KODE,"NAMA"=>$NAMA);
+					}
 				}
 			}
 			echo json_encode($arrayDataTemp);

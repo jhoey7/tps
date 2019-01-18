@@ -180,5 +180,13 @@ $(function(){
   autocomplete('PELABUHAN_BONGKAR','/popup/autocomplete/mst_port/nama',function(event, ui){
     $('#KD_PEL_BONGKAR').val(ui.item.KODE);
   });
+  autocomplete('CONSIGNEE','/popup/autocomplete/mst_organisasi/cons~nama',function(event, ui){
+    $('#KD_ORG_CONSIGNEE').val(ui.item.KODE);
+    $('#ID_CONSIGNEE').val(ui.item.NPWP);
+  });
+  autocomplete('ID_CONSIGNEE','/popup/autocomplete/mst_organisasi/cons~npwp',function(event, ui){
+    $('#KD_ORG_CONSIGNEE').val(ui.item.KODE);
+    $('#CONSIGNEE').val(ui.item.NAMA);
+  });
 });
 </script>

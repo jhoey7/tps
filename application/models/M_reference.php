@@ -133,6 +133,7 @@ class M_reference extends CI_Model {
         $USERLOGIN = $this->session->userdata('USERLOGIN');
         $KD_TPS = $this->session->userdata('KD_TPS');
         $KD_GUDANG = $this->session->userdata('KD_GUDANG');
+        $KD_ORGANISASI = $this->session->userdata('KD_ORGANISASI');
         if($type == "save"){
 			if($act=="reff_kapal"){
 				foreach ($this->input->post('DATA') as $a => $b){
@@ -156,6 +157,7 @@ class M_reference extends CI_Model {
                     else $DATA[$a] = strtoupper(trim($b));
                 }
 				$DATA['KD_TIPE_ORGANISASI'] = 'CONS';
+				$DATA['KD_ORG'] = $KD_ORGANISASI;
 				$result = $this->db->insert('t_organisasi', $DATA);
 				if(!$result){
 					$error += 1;
