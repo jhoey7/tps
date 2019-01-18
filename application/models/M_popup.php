@@ -65,7 +65,7 @@ class M_popup extends CI_Model {
 			$this->newtable->search(array(array('NPWP', 'NPWP'),array('NAMA', 'NAMA'),array('ALAMAT', 'ALAMAT')));
 			$this->newtable->action(site_url()."/popup/popup_search/".$arract[0]."~".$arract[1]."/".$id."/".$popup);
 			$this->newtable->hiddens(array('ID'));
-			$this->newtable->keys(array("ID","NAMA"));
+			$this->newtable->keys(array("ID","NAMA","NPWP"));
 			$this->newtable->orderby(3);
 			$this->newtable->sortby("ASC");
 			$showchk = true;

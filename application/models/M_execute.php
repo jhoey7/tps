@@ -490,10 +490,10 @@ class M_execute extends CI_Model {
 				$DATA['WK_REKAM'] = date('Y-m-d H:i:s');
 				$DATA['TGL_BL_AWB'] = date_input($DATA['TGL_BL_AWB']);
 				$DATA['TGL_MASTER_BL_AWB'] = date_input($DATA['TGL_MASTER_BL_AWB']);
-				if($this->input->post('CONSIGNEE')!=''){
-					$SQL_CONS = "SELECT ID, NAMA FROM t_organisasi
+				if($this->input->post('ID_CONSIGNEE')!=''){
+					$SQL_CONS = "SELECT ID, NAMA, NPWP FROM t_organisasi
 								 WHERE KD_TIPE_ORGANISASI = 'CONS'
-								 AND NAMA = ".$this->db->escape(trim(strtoupper($this->input->post('CONSIGNEE'))));
+								 AND NPWP = ".$this->db->escape(trim(strtoupper($this->input->post('ID_CONSIGNEE'))));
 					$result_cons = $func->main->get_result($SQL_CONS);
 					if($result_cons){
 						foreach($SQL_CONS->result_array() as $row => $value){
@@ -501,8 +501,11 @@ class M_execute extends CI_Model {
 						}
 						$DATA['KD_ORG_CONSIGNEE'] = $arr_cons['ID'];
 					}else{
-						$data_cons = array('NAMA' => strtoupper($this->input->post('CONSIGNEE')),
-										   'KD_TIPE_ORGANISASI' => 'CONS');
+						$data_cons = array(
+							'NAMA' 					=> strtoupper($this->input->post('CONSIGNEE')),
+							'KD_TIPE_ORGANISASI' 	=> 'CONS',
+							'NPWP' 					=> strtoupper($this->input->post('ID_CONSIGNEE')),
+						);
 						$this->db->insert('t_organisasi', $data_cons);
 						$DATA['KD_ORG_CONSIGNEE'] = $this->db->insert_id();
 					}
@@ -549,9 +552,9 @@ class M_execute extends CI_Model {
 									B.KD_TIMBUN_KAPAL, B.KD_TIMBUN, B.KD_PEL_MUAT, B.KD_PEL_TRANSIT, B.KD_PEL_BONGKAR, 
 									B.KD_DOK_IN, B.NO_DOK_IN, B.TGL_DOK_IN, B.KD_CONT_STATUS_IN, B.KD_SARANA_ANGKUT_IN, 
 									B.NO_POL_IN, B.KD_DOK_OUT, B.NO_DOK_OUT, B.TGL_DOK_OUT, B.KD_CONT_STATUS_OUT, 
-									B.KD_SARANA_ANGKUT_OUT, B.NO_POL_OUT, B.KD_TPS_TUJUAN, B.KD_GUDANG_TUJUAN, B.NO_DAFTAR_PABEAN, 
-									B.TGL_DAFTAR_PABEAN, B.NO_SEGEL_BC, B.TGL_SEGEL_BC, B.NO_IJIN_TPS, B.TGL_IJIN_TPS, B.KOMODITI,
-									B.CHARGE_BRUTO, B.NO_SUB_POS_BC11, B.KD_ORG_SHIPPER, B.KONDISI_IN
+									B.KD_SARANA_ANGKUT_OUT, B.NO_POL_OUT, B.KD_TPS_TUJUAN, B.KD_GUDANG_TUJUAN, A.CALL_SIGN,
+									B.NO_DAFTAR_PABEAN, B.TGL_DAFTAR_PABEAN, B.NO_SEGEL_BC, B.TGL_SEGEL_BC, B.NO_IJIN_TPS, 
+									B.TGL_IJIN_TPS, B.KOMODITI, B.CHARGE_BRUTO, B.NO_SUB_POS_BC11, B.KD_ORG_SHIPPER, B.KONDISI_IN
 									FROM t_repohdr A
 									INNER JOIN t_repokms B ON B.KD_REPOHDR=A.ID
 									WHERE A.ID = ".$this->db->escape($arrid[0])."
@@ -589,6 +592,7 @@ class M_execute extends CI_Model {
 								$HDR['TGL_TIBA'] = $arrhdr['TGL_TIBA'];
 								$HDR['NO_BC11'] = $arrhdr['NO_BC11'];
 								$HDR['TGL_BC11'] = $arrhdr['TGL_BC11'];
+								$HDR['CALL_SIGN'] = $arrhdr['CALL_SIGN'];
 								$HDR['WK_REKAM'] = date('Y-m-d H:i:s');
 								$result = $this->db->insert('t_cocostshdr', $HDR);
 								$ID = $this->db->insert_id();
@@ -613,15 +617,18 @@ class M_execute extends CI_Model {
 					if($insertData){
 						for($a=0; $a<count($arrchk); $a++){
 							$arrid = explode("~",$arrchk[$a]);
-							$sql_hdr = "SELECT A.KD_ASAL_BRG, A.KD_TPS_ASAL, A.KD_GUDANG_ASAL, A.KD_TPS, A.KD_GUDANG, A.KD_KAPAL, A.NM_ANGKUT, A.NO_VOY_FLIGHT, A.TGL_TIBA, 
-										A.NO_BC11, A.TGL_BC11, B.SERI, B.KD_KEMASAN, B.JUMLAH, B.ID_CONT_ASAL, B.NO_CONT_ASAL, B.BRUTO, 
-										B.NO_SEGEL, B.KONDISI_SEGEL, B.NO_BL_AWB, B.TGL_BL_AWB, B.NO_MASTER_BL_AWB, B.TGL_MASTER_BL_AWB,
-										B.NO_POS_BC11, B.KD_ORG_CONSIGNEE, B.KD_TIMBUN_KAPAL, B.KD_TIMBUN, B.KD_PEL_MUAT, B.KD_PEL_TRANSIT, 
-										B.KD_PEL_BONGKAR, B.KD_DOK_IN, B.NO_DOK_IN, B.TGL_DOK_IN, B.KD_CONT_STATUS_IN,
-										B.KD_SARANA_ANGKUT_IN, B.NO_POL_IN, B.KD_DOK_OUT, B.NO_DOK_OUT, B.TGL_DOK_OUT, B.KD_CONT_STATUS_OUT, 
-										B.KD_SARANA_ANGKUT_OUT, B.NO_POL_OUT, B.KD_TPS_TUJUAN, B.KD_GUDANG_TUJUAN, B.NO_DAFTAR_PABEAN, 
-										B.TGL_DAFTAR_PABEAN, B.NO_SEGEL_BC, B.TGL_SEGEL_BC, B.NO_IJIN_TPS, B.TGL_IJIN_TPS, B.KOMODITI,
-										B.CHARGE_BRUTO, B.NO_SUB_POS_BC11, B.KONDISI_IN, B.KD_ORG_SHIPPER
+							$sql_hdr = "SELECT A.KD_ASAL_BRG, A.KD_TPS_ASAL, A.KD_GUDANG_ASAL, A.KD_TPS, A.KD_GUDANG, 
+										A.KD_KAPAL, A.NM_ANGKUT, A.NO_VOY_FLIGHT, A.TGL_TIBA, A.NO_BC11, A.TGL_BC11, 
+										B.SERI, B.KD_KEMASAN, B.JUMLAH, B.ID_CONT_ASAL, B.NO_CONT_ASAL, B.BRUTO, 
+										B.NO_SEGEL, B.KONDISI_SEGEL, B.NO_BL_AWB, B.TGL_BL_AWB, B.NO_MASTER_BL_AWB, 
+										B.TGL_MASTER_BL_AWB, B.NO_POS_BC11, B.KD_ORG_CONSIGNEE, B.KD_TIMBUN_KAPAL, 
+										B.KD_TIMBUN, B.KD_PEL_MUAT, B.KD_PEL_TRANSIT, B.KD_PEL_BONGKAR, B.KD_DOK_IN, 
+										B.NO_DOK_IN, B.TGL_DOK_IN, B.KD_CONT_STATUS_IN, B.KD_SARANA_ANGKUT_IN, B.NO_POL_IN, 
+										B.KD_DOK_OUT, B.NO_DOK_OUT, B.TGL_DOK_OUT, B.KD_CONT_STATUS_OUT, B.KD_SARANA_ANGKUT_OUT,
+										B.NO_POL_OUT, B.KD_TPS_TUJUAN, B.KD_GUDANG_TUJUAN, B.NO_DAFTAR_PABEAN, 
+										B.TGL_DAFTAR_PABEAN, B.NO_SEGEL_BC, B.TGL_SEGEL_BC, B.NO_IJIN_TPS, B.TGL_IJIN_TPS, 
+										B.KOMODITI, B.CHARGE_BRUTO, B.NO_SUB_POS_BC11, B.KONDISI_IN, B.KD_ORG_SHIPPER, 
+										A.CALL_SIGN
 										FROM t_repohdr A
 										INNER JOIN t_repokms B ON B.KD_REPOHDR=A.ID
 										WHERE A.ID = ".$this->db->escape($arrid[0])."
@@ -658,6 +665,7 @@ class M_execute extends CI_Model {
 									$HDR['NO_BC11'] = $arrhdr['NO_BC11'];
 									$HDR['TGL_BC11'] = $arrhdr['TGL_BC11'];
 									$HDR['WK_REKAM'] = date('Y-m-d H:i:s');
+									$HDR['CALL_SIGN'] = $arrhdr['CALL_SIGN'];
 									$result = $this->db->insert('t_cocostshdr', $HDR);
 									$ID = $this->db->insert_id();
 								}
