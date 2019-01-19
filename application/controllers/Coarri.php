@@ -208,7 +208,7 @@ class Coarri extends CI_Controller {
 		}
 	}
 	
-	public function loading($act,$id){
+	public function gateout($act,$id){
 		if (!$this->session->userdata('LOGGED')){
 			$this->index();
 			return;
@@ -241,7 +241,7 @@ class Coarri extends CI_Controller {
 			$this->index();
 		}else{
 			$this->load->model("m_coarri");
-			$arrdata = $this->m_coarri->loading($act, $id);
+			$arrdata = $this->m_coarri->gateout($act, $id);
 			$data = $this->load->view('content/newtable', $arrdata, true);
 			if($this->input->post("ajax")||$act=="post"){
 				echo $arrdata;
