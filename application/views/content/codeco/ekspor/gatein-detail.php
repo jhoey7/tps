@@ -9,8 +9,12 @@
           <div class="panel-body container-fluid">
             <div class="row">
               <div class="form-group form-material">
-                <label class="col-sm-3 control-label">PESAWAT/KAPAL</label>
-                <div class="col-sm-9">
+                <label class="col-sm-3 control-label">DATA SARANA ANGKUT</label>
+                <div class="col-sm-2">
+                  <input type="text" name="CALL_SIGN" id="CALL_SIGN" mandatory="yes" class="form-control focus" placeholder="CALL SIFN" value="<?php echo $arrdata['CALL_SIGN']; ?>" readonly="readonly">
+                  <div class="hint">CALL SIGN</div>
+                </div>
+                <div class="col-sm-7">
                   <input type="hidden" class="form-control focus" name="KD_KAPAL" id="KD_KAPAL" mandatory="yes" placeholder="KODE KAPAL" value="<?php echo $arrdata['KD_KAPAL']; ?>" readonly="readonly">
                   <input type="text" name="NM_ANGKUT" id="NM_ANGKUT" mandatory="yes" class="form-control focus" placeholder="NAMA ANGKUT" value="<?php echo $arrdata['NM_ANGKUT']; ?>" readonly="readonly">
                   <div class="hint">NAMA PESAWAT/KAPAL</div>
@@ -90,28 +94,16 @@
   <div>&nbsp;</div>
   <div class="nav nav-tabs-horizontal nav-tabs-inverse nav-tabs-animate">
     <ul class="nav nav-tabs nav-tabs" data-plugin="nav-tabs" role="tablist">
-      <li class="active" role="presentation">
-        <a data-toggle="tab" href="#kontainer" aria-controls="kontainer" role="tab">
-            <i class="icon md-view-list margin-0" aria-hidden="true"></i> KONTAINER
-        </a>
-      </li>
-      <?php if(set_setting('SETDATAKEMASAN') == 'Y'): ?>
-      <li role="presentation" class="">
+      <li role="presentation" class="active">
         <a data-toggle="tab" href="#kemasan" aria-controls="kemasan"role="tab">
             <i class="icon md-widgets margin-0" aria-hidden="true"></i> KEMASAN
         </a>
       </li>
-      <?php endif; ?>
     </ul>
     <div class="tab-content">
-      <div class="tab-pane active animation-slide-top" id="kontainer" role="tabpanel">
-        <?php echo $table_kontainer; ?>
-      </div>
-      <?php if(set_setting('SETDATAKEMASAN') == 'Y'): ?>
-      <div class="tab-pane animation-slide-top" id="kemasan" role="tabpanel">
+      <div class="tab-pane active animation-slide-top" id="kemasan" role="tabpanel">
         <?php echo $table_kemasan; ?>
       </div>
-      <?php endif; ?>
     </div>
   </div>
 </div>

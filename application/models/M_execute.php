@@ -181,6 +181,7 @@ class M_execute extends CI_Model {
 				}
 				$DATA['KD_TPS'] = $KD_TPS;
 				$DATA['KD_GUDANG'] = $KD_GUDANG;
+				$DATA['KD_TRADER'] = $KD_ORGANISASI;
 				$DATA['TGL_TIBA'] = validate($DATA['TGL_TIBA'],'DATE');
 				$DATA['TGL_BC11'] = validate($DATA['TGL_BC11'],'DATE');
 				$DATA['KD_PEL_MUAT'] = $this->get_referensi('port',$DATA['KD_PEL_MUAT'],$this->input->post('PELABUHAN_MUAT'));
@@ -193,10 +194,9 @@ class M_execute extends CI_Model {
 				}else{
 					$QUERY = "SELECT ID FROM t_cocostshdr 
 							  WHERE KD_DOK  = ".$this->db->escape(trim($DATA['KD_DOK']))."
+							  AND KD_ASAL_BRG = '4'
 							  AND NO_BC11 = ".$this->db->escape(trim($DATA['NO_BC11']))."
-							  AND VOY_IN = ".$this->db->escape(trim($DATA['VOY_IN']))."
-							  AND VOY_OUT = ".$this->db->escape(trim($DATA['VOY_OUT']))."
-							  AND CALL_SIGN = ".$this->db->escape(trim($DATA['CALL_SIGN']));
+							  AND TGL_BC11 = ".$this->db->escape(trim($DATA['TGL_BC11']));
 					$result = $this->db->query($QUERY);
 					if($result->num_rows() > 0){
 						$error += 1;
@@ -232,7 +232,6 @@ class M_execute extends CI_Model {
 					$DATA['KD_PEL_MUAT'] = $this->get_referensi('port',$DATA['KD_PEL_MUAT'],$this->input->post('PELABUHAN_MUAT'));
 					$DATA['KD_PEL_TRANSIT'] = $this->get_referensi('port',$DATA['KD_PEL_TRANSIT'],$this->input->post('PELABUHAN_TRANSIT'));
 					$DATA['KD_PEL_BONGKAR'] = $this->get_referensi('port',$DATA['KD_PEL_BONGKAR'],$this->input->post('PELABUHAN_BONGKAR'));
-					$DATA['KD_ORG_CONSIGNEE'] = $this->get_referensi('cons',$DATA['KD_ORG_CONSIGNEE'],$this->input->post('CONSIGNEE'));
 					$DATA['TGL_MASTER_BL_AWB'] = validate($DATA['TGL_MASTER_BL_AWB'],'DATE');
 					$DATA['TGL_BL_AWB'] = validate($DATA['TGL_BL_AWB'],'DATE');
 					$DATA['TGL_DOK_IN'] = validate($DATA['TGL_DOK_IN'],'DATE');
@@ -242,6 +241,27 @@ class M_execute extends CI_Model {
 					$DATA['WK_REKAM'] = date('Y-m-d H:i:s');
 					$DATA['ID'] = $id;
 					$DATA['SERI'] = $this->set_id('t_cocostskms',$id);
+					if ($this->input->post('ID_CONSIGNEE')!='') {
+						$SQL_CONS = "SELECT ID, NAMA, NPWP FROM t_organisasi
+									 WHERE KD_TIPE_ORGANISASI = 'CONS'
+									 AND NPWP = ".$this->db->escape(trim(strtoupper($this->input->post('ID_CONSIGNEE'))));
+						$result_cons = $func->main->get_result($SQL_CONS);
+						if($result_cons){
+							foreach($SQL_CONS->result_array() as $row => $value){
+								$arr_cons = $value;
+							}
+							$DATA['KD_ORG_CONSIGNEE'] = $arr_cons['ID'];
+						}else{
+							$data_cons = array(
+								'NAMA' 					=> strtoupper($this->input->post('CONSIGNEE')),
+								'KD_TIPE_ORGANISASI' 	=> 'CONS',
+								'NPWP' 					=> strtoupper($this->input->post('ID_CONSIGNEE')),
+								'KD_ORG' 				=> $KD_ORGANISASI,
+							);
+							$this->db->insert('t_organisasi', $data_cons);
+							$DATA['KD_ORG_CONSIGNEE'] = $this->db->insert_id();
+						}
+					}
 					$exec = $this->db->insert('t_cocostskms', $DATA);
 					if(!$exec){
 						$error += 1;

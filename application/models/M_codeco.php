@@ -122,46 +122,23 @@ class M_codeco extends CI_Model {
 		if($KD_GROUP!="SPA"){
 			$addsql .= " AND A.KD_TPS = ".$this->db->escape($KD_TPS)." AND A.KD_GUDANG = ".$this->db->escape($KD_GUDANG);
 		}
-		if(!$this->input->post('ajax')){
-			$addsql .= " AND A.TGL_TIBA >= DATE_ADD(CURDATE(), INTERVAL -7 DAY)";
+		if($KD_GROUP!="SPA"){
+			$addsql .= " AND A.KD_TPS = ".$this->db->escape($KD_TPS)." AND A.KD_GUDANG = ".$this->db->escape($KD_GUDANG);
 		}
-		$SQL = "SELECT CONCAT(C.NAMA,'<BR>[',A.NM_ANGKUT,']') AS 'NAMA ANGKUT', 
-				A.NO_VOY_FLIGHT AS 'NO. VOYAGE/FLIGHT', 
+		$SQL = "SELECT B.NAMA_GUDANG AS GUDANG, CONCAT(C.NAMA,'<BR>[',A.NM_ANGKUT,']') AS 'NAMA ANGKUT', 
+				C.CALL_SIGN AS 'CALL SIGN', A.NO_VOY_FLIGHT AS 'NO. VOY FLIGHT', 
 				DATE_FORMAT(A.TGL_TIBA,'%d-%m-%Y') AS 'TGL. TIBA', A.NO_BC11 AS 'NO. BC11',
-				DATE_FORMAT(A.TGL_BC11,'%d-%m-%Y') AS 'TGL. BC11', A.WK_REKAM AS 'WAKTU REKAM',
-				CONCAT('<span class=\"label label-danger\">JUMLAH : ',(
-									SELECT COUNT(X.ID) FROM t_cocostscont X WHERE X.ID = A.ID),
-				'</span><BR><span class=\"label label-info\">GATE IN : ',(
-									SELECT COUNT(X.ID) FROM t_cocostscont X 
-									WHERE X.WK_IN IS NOT NULL 
-									AND X.WK_OUT IS NULL 
-									AND X.ID = A.ID),
-				'</span><BR><span class=\"label label-success\">LOADING : ',(SELECT COUNT(X.ID) 
-								 	FROM t_cocostscont X 
-									WHERE X.WK_IN IS NOT NULL 
-									AND X.WK_OUT IS NOT NULL 
-									AND X.ID = A.ID),'<span>') AS 'KONTAINER',
-				CONCAT('<span class=\"label label-danger\">JUMLAH : ',(
-									SELECT COUNT(Y.ID) FROM t_cocostskms Y WHERE Y.ID = A.ID),
-				'</span><BR><span class=\"label label-info\">GATE IN : ',(
-									SELECT COUNT(Y.ID) FROM t_cocostskms Y 
-									WHERE Y.WK_IN IS NOT NULL 
-									AND Y.WK_OUT IS NULL 
-									AND Y.ID = A.ID),
-				'</span><BR><span class=\"label label-success\">LOADING : ',(
-									SELECT COUNT(Y.ID) FROM t_cocostskms Y 
-									WHERE Y.WK_IN IS NOT NULL 
-									AND Y.WK_OUT IS NOT NULL 
-									AND Y.ID = A.ID),'<span>') AS 'KEMASAN',
-				A.ID
+				DATE_FORMAT(A.TGL_BC11,'%d-%m-%Y') AS 'TGL. BC11', A.ID
 				FROM t_cocostshdr A 
 				LEFT JOIN reff_gudang B ON A.KD_TPS = B.KD_TPS AND A.KD_GUDANG = B.KD_GUDANG 
 				LEFT JOIN reff_kapal C ON A.KD_KAPAL = C.ID
 				WHERE A.KD_ASAL_BRG = '3'".$addsql;
-		$proses = array('ENTRY'  => array('MODAL',"codeco/gatein/add", '0','','md-plus-circle'),
-						'UPDATE' => array('MODAL',"codeco/gatein/update", '1','','md-edit'),
-						'DETAIL' => array('GET',site_url()."/codeco/gatein/detail", '1','','md-zoom-in'),
-						'UPLOAD' => array('ADD',site_url()."/codeco/gatein/upload", '','','md-attachment'));
+		$proses = array(
+			'ENTRY'  => array('MODAL',"codeco/gatein/add", '0','','md-plus-circle'),
+			'UPDATE' => array('MODAL',"codeco/gatein/update", '1','','md-edit'),
+			'DETAIL' => array('GET',site_url()."/codeco/gatein/detail", '1','','md-zoom-in'),
+			// 'UPLOAD' => array('ADD',site_url()."/codeco/gatein/upload", '','','md-attachment')
+		);
 		$this->newtable->multiple_search(true);
 		$this->newtable->show_chk($check);
 		$this->newtable->show_menu($check);
@@ -205,8 +182,8 @@ class M_codeco extends CI_Model {
 				CONCAT('NO. ',IFNULL(NO_MASTER_BL_AWB,'-'),'<BR>TGL. ',IFNULL(DATE_FORMAT(A.TGL_MASTER_BL_AWB,'%d-%m-%Y'),'-')) AS 'MASTER BL/AWB',
 				CONCAT('NO. ',IFNULL(NO_BL_AWB,'-'),'<BR>TGL. ',IFNULL(DATE_FORMAT(A.TGL_BL_AWB,'%d-%m-%Y'),'-')) AS 'BL/AWB',
 				A.NO_POS_BC11 AS 'NO. POS BC11', C.NAMA AS CONISGNEE, 
-				DATE_FORMAT(IFNULL(A.WK_IN,'-'),'%d-%m-%Y %H:%i:%s') AS 'GATE IN', A.WK_REKAM AS 'TANGGAL REKAM', A.ID, A.SERI,
-				'CODECO/GATEIN_KEMASAN' AS POST
+				DATE_FORMAT(IFNULL(A.WK_IN,'-'),'%d-%m-%Y %H:%i:%s') AS 'GATE IN', A.WK_REKAM AS 'TANGGAL REKAM', 
+				A.REF_NUMBER_IN AS 'REF NUMBER', A.ID, A.SERI, 'CODECO/GATEIN_KEMASAN' AS POST
 				FROM t_cocostskms A
 				INNER JOIN t_cocostshdr B ON B.ID=A.ID
 				LEFT JOIN t_organisasi C ON C.ID=A.KD_ORG_CONSIGNEE

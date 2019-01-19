@@ -14,7 +14,7 @@
           <div class="panel-body container-fluid">
             <div class="row">
               <div class="form-group form-material">
-                <label class="col-sm-3 control-label">PESAWAT/KAPAL</label>
+                <label class="col-sm-3 control-label">DATA SARANA ANGKUT</label>
                 <div class="col-sm-9">
                   <input type="hidden" class="form-control" name="DATA[KD_KAPAL]" id="KD_KAPAL" placeholder="KODE" value="<?php echo $arrdata['KD_KAPAL']; ?>" readonly="readonly">
                   <input type="text" name="DATA[NM_ANGKUT]" id="NM_ANGKUT" mandatory="yes" class="form-control" placeholder="NAMA ANGKUT" value="<?php echo $arrdata['NM_ANGKUT']; ?>">
@@ -82,6 +82,7 @@
             </div>
           </div>
           <input type="hidden" name="DATA[KD_ASAL_BRG]" id="KD_ASAL_BRG" readonly="readonly" value="3"/>
+          <input type="hidden" name="DATA[KD_DOK]" id="KD_DOK" readonly="readonly" value="7"/>
           <input type="hidden" name="action" id="action" readonly="readonly" value="<?php echo site_url('codeco/gatein/post'); ?>"/>
         </form>
       </div>
