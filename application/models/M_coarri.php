@@ -162,9 +162,9 @@ class M_coarri extends CI_Model {
 			return $arrdata;	
 	}
 	
-	public function loading($act, $id){
-		$page_title = "LOADING";
-		$title = "LOADING";
+	public function gateout($act, $id){
+		$page_title = "GATEOUT";
+		$title = "GATEOUT";
 		$KD_TPS = $this->session->userdata('KD_TPS');
 		$KD_GUDANG = $this->session->userdata('KD_GUDANG');
 		$KD_GROUP = $this->session->userdata('KD_GROUP');
@@ -174,55 +174,32 @@ class M_coarri extends CI_Model {
 		$this->newtable->breadcrumb('Loading', 'javascript:void(0)','');
 		$check = (grant()=="W")?true:false;
 		if($KD_GROUP!="SPA"){
-			$addsql .= " AND A.KD_TPS = ".$this->db->escape($KD_TPS)." AND A.KD_GUDANG = ".$this->db->escape($KD_GUDANG);
+			$addsql .= " AND B.KD_TPS = ".$this->db->escape($KD_TPS)." AND B.KD_GUDANG = ".$this->db->escape($KD_GUDANG);
 		}
-		if(!$this->input->post('ajax')){
-			$addsql .= " AND A.TGL_TIBA >= DATE_ADD(CURDATE(), INTERVAL -7 DAY)";
-		}
-		$SQL = "SELECT CONCAT(C.NAMA,'<BR>[',A.NM_ANGKUT,']') AS 'NAMA ANGKUT', 
-				A.NO_VOY_FLIGHT AS 'NO. VOYAGE/FLIGHT', 
-				DATE_FORMAT(A.TGL_TIBA,'%d-%m-%Y') AS 'TGL. TIBA', A.NO_BC11 AS 'NO. BC11',
-				DATE_FORMAT(A.TGL_BC11,'%d-%m-%Y') AS 'TGL. BC11', A.WK_REKAM AS 'WAKTU REKAM',
-				CONCAT('<span class=\"label label-danger\">JUMLAH : ',(
-									SELECT COUNT(X.ID) FROM t_cocostscont X WHERE X.ID = A.ID),
-				'</span><BR><span class=\"label label-info\">GATE IN : ',(
-									SELECT COUNT(X.ID) FROM t_cocostscont X 
-									WHERE X.WK_IN IS NOT NULL 
-									AND X.WK_OUT IS NULL 
-									AND X.ID = A.ID),
-				'</span><BR><span class=\"label label-success\">LOADING : ',(SELECT COUNT(X.ID) 
-								 	FROM t_cocostscont X 
-									WHERE X.WK_IN IS NOT NULL 
-									AND X.WK_OUT IS NOT NULL 
-									AND X.ID = A.ID),'<span>') AS 'KONTAINER',
-				CONCAT('<span class=\"label label-danger\">JUMLAH : ',(
-									SELECT COUNT(Y.ID) FROM t_cocostskms Y WHERE Y.ID = A.ID),
-				'</span><BR><span class=\"label label-info\">GATE IN : ',(
-									SELECT COUNT(Y.ID) FROM t_cocostskms Y 
-									WHERE Y.WK_IN IS NOT NULL 
-									AND Y.WK_OUT IS NULL 
-									AND Y.ID = A.ID),
-				'</span><BR><span class=\"label label-success\">LOADING : ',(
-									SELECT COUNT(Y.ID) FROM t_cocostskms Y 
-									WHERE Y.WK_IN IS NOT NULL 
-									AND Y.WK_OUT IS NOT NULL 
-									AND Y.ID = A.ID),'<span>') AS 'KEMASAN', A.ID
-				FROM t_cocostshdr A 
-				LEFT JOIN reff_gudang B ON A.KD_TPS = B.KD_TPS AND A.KD_GUDANG = B.KD_GUDANG 
-				LEFT JOIN reff_kapal C ON A.KD_KAPAL = C.ID
-				WHERE A.KD_DOK = '3'".$addsql;
+
+		$SQL = "SELECT CONCAT(D.NM_ANGKUT,'<BR>',E.NAMA) AS 'SARANA ANGKUT', D.NO_VOY_FLIGHT AS 'NO. FLIGHT', 
+				DATE_FORMAT(D.TGL_TIBA,'%d-%m-%Y') AS 'TGL. TIBA', 
+				CONCAT(D.NO_BC11,'<BR>',DATE_FORMAT(D.TGL_BC11,'%d-%m-%Y')) AS BC11, 
+				CONCAT(A.NO_BL_AWB,'<BR>',DATE_FORMAT(A.TGL_BL_AWB,'%d-%m-%Y')) AS 'BL AWB', A.KD_KEMASAN AS KEMASAN, A.JUMLAH,
+				A.WK_OUT AS 'GATE OUT', A.ID, A.SERI
+				FROM t_cocostskms A
+				LEFT JOIN t_cocostshdr B ON B.ID=A.ID
+				LEFT JOIN t_organisasi C ON C.ID=A.KD_ORG_CONSIGNEE
+				INNER JOIN t_cocostshdr D ON D.ID=A.ID
+				LEFT JOIN reff_kapal E ON E.ID=D.KD_KAPAL
+				WHERE D.KD_ASAL_BRG = '3'".$addsql;
 		$proses = array('DETAIL' => array('GET',site_url()."/coarri/loading/detail", '1','','md-zoom-in'),
 						'UPLOAD' => array('ADD',site_url()."/coarri/loading/upload", '','','md-attachment'));
 		$this->newtable->multiple_search(true);
 		$this->newtable->show_chk($check);
 		$this->newtable->show_menu($check);
 		$this->newtable->show_search(true);
-		$this->newtable->search(array(array('A.NO_BC11','NO. BC11'),array('C.NAMA','NAMA ANGKUT'),array('A.TGL_TIBA','TANGGAL TIBA','DATERANGE')));
+		$this->newtable->search(array(array('A.KD_KEMASAN', 'KODE KEMASAN'),array('A.NO_BL_AWB', 'NO. BL/AWB')));
 		$this->newtable->action(site_url() . "/coarri/loading");
 		if($check) $this->newtable->detail(array('GET',site_url()."/coarri/loading/detail"));
 		$this->newtable->tipe_proses('button');
-		$this->newtable->hiddens(array("ID"));
-		$this->newtable->keys(array("ID"));
+		$this->newtable->hiddens(array("ID","SERI"));
+		$this->newtable->keys(array("ID","SERI"));
 		$this->newtable->cidb($this->db);
 		$this->newtable->orderby(6);
 		$this->newtable->sortby("DESC");
