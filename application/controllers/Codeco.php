@@ -200,6 +200,7 @@ class Codeco extends CI_Controller {
 			$data['id'] = $id;
 			$this->load->model("m_execute");
 			$data['arrdata'] = $this->m_execute->get_data('kapal', $id);
+			$data['table_kontainer'] = $this->gatein_kontainer($act,$id);
 			$data['table_kemasan'] = $this->gatein_kemasan($act,$id);
 			$this->content = $this->load->view('content/codeco/ekspor/gatein-detail',$data,true);
 			$this->index();

@@ -141,17 +141,6 @@ class M_popup extends CI_Model {
 			$this->newtable->orderby(1);
 			$this->newtable->sortby("ASC");
 			$showchk = true;
-		}else if($arract[0]=="mst_kemasan"){
-			$judul = "KEMASAN";
-			$SQL = "SELECT ID AS KODE, NAMA FROM reff_kemasan";
-			$proses = array('SELECT' => array('OPTION', site_url()."/popup/pilih".$id, '1','','icon md-check',$popup));
-			$this->newtable->search(array(array('ID', 'KODE'),array('NAMA', 'URAIAN')));
-			$this->newtable->action(site_url()."/popup/popup_search/".$arract[0]."~".$arract[1]."/".$id."/".$popup);
-			$this->newtable->hiddens(array(''));
-			$this->newtable->keys(array("KODE","NAMA"));
-			$this->newtable->orderby(1);
-			$this->newtable->sortby("ASC");
-			$showchk = true;
 		}
 		$this->newtable->multiple_search(false);
 		$this->newtable->tipe_proses('button');

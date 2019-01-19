@@ -13,7 +13,7 @@
         <form name="form_kms" id="form_kms" class="form-horizontal" role="form" action="<?php echo site_url('execute/process/'.$action.'/kemasan_in/'.$id); ?>" method="post" autocomplete="off" onsubmit="save_post('form_kms','divtblkemasan'); return false;" popup="1">
           <div class="panel-body container-fluid">
             <div class="row">
-              <!-- <div class="form-group form-material">
+              <div class="form-group form-material">
                 <label class="col-sm-3 control-label">KONTAINER ASAL</label>
                 <div class="col-sm-8">
                   <input type="hidden" class="form-control" name="DATA[ID_CONT_ASAL]" id="ID_CONT_ASAL" value="<?php echo $arrdata['ID_CONT_ASAL']; ?>" readonly="readonly">
@@ -25,21 +25,16 @@
                   	<i class="icon md-search"></i>
                     </button>
                 </div>
-              </div> -->
+              </div>
               <div class="form-group form-material">
                 <label class="col-sm-3 control-label">KEMASAN</label>
                 <div class="col-sm-3">
                   <input type="text" class="form-control" name="DATA[KD_KEMASAN]" id="KD_KEMASAN" mandatory="yes" placeholder="KODE KEMASAN" value="<?php echo $arrdata['KD_KEMASAN']; ?>">
                   <div class="hint">KODE KEMASAN</div>
                 </div>
-                <div class="col-sm-5">
+                <div class="col-sm-6">
                   <input type="text" class="form-control" name="KEMASAN" id="KEMASAN" mandatory="yes" placeholder="NAMA KEMASAN" value="<?php echo $arrdata['KEMASAN']; ?>">
                   <div class="hint">NAMA KEMASAN</div>
-                </div>
-                <div class="col-sm-1">
-                  <button type="button" class="btn btn-sm btn-primary" onclick="popup_searchtwo('popup/popup_search/mst_kemasan/KD_KEMASAN;KEMASAN/2'); ">
-                    <i class="icon md-search"></i>
-                  </button>
                 </div>
               </div>
               <div class="form-group form-material">
@@ -109,19 +104,10 @@
               </div>
               <div class="form-group form-material">
                 <label class="col-sm-3 control-label">CONSIGNEE</label>
-                <div class="col-sm-3">
-                  <input type="text" name="ID_CONSIGNEE" mandatory="yes" id="ID_CONSIGNEE" class="form-control" value="<?php echo $arrdata['ID_CONSIGNEE']; ?>" placeholder="NPWP">
-                  <div class="hint">ID CONSIGNEE/NPWP</div>
-                </div>
-                <div class="col-sm-5">
+                <div class="col-sm-9">
                   <input type="hidden" name="DATA[KD_ORG_CONSIGNEE]" id="KD_ORG_CONSIGNEE" class="form-control" value="<?php echo $arrdata['KD_ORG_CONSIGNEE']; ?>" readonly="readonly">
                   <input type="text" name="CONSIGNEE" mandatory="yes" id="CONSIGNEE" class="form-control" value="<?php echo $arrdata['CONSIGNEE']; ?>" placeholder="CONSIGNEE">
                   <div class="hint">CONSIGNEE</div>
-                </div>
-                <div class="col-sm-1">
-                  <button type="button" class="btn btn-primary btn-sm" onclick="popup_searchtwo('popup/popup_search/mst_organisasi~CONS/KD_ORG_CONSIGNEE;CONSIGNEE;ID_CONSIGNEE/2','','60','600')">
-                    <i class="icon md-search"></i>
-                  </button>
                 </div>
               </div>
               <div class="form-group form-material">
@@ -166,15 +152,10 @@
               </div>
               <div class="form-group form-material">
                 <label class="col-sm-3 control-label">JENIS DOKUMEN</label>
-                <div class="col-sm-8">
+                <div class="col-sm-9">
                   <input type="hidden" name="DATA[KD_DOK_IN]" id="KD_DOK_IN" class="form-control" mandatory="yes" value="<?php echo $arrdata['KD_DOK_IN']; ?>" readonly="readonly">
                   <input type="text" name="JENIS_DOK_IN" id="JENIS_DOK_IN" class="form-control" mandatory="yes" placeholder="JENIS DOKUMEN" value="<?php echo $arrdata['DOK_IN']; ?>">
                   <div class="hint">JENIS DOKUMEN</div>
-                </div>
-                <div class="col-sm-1">
-                  <button type="button" class="btn btn-primary btn-sm" onclick="popup_searchtwo('popup/popup_search/mst_dokbc~EXP/KD_DOK_IN;JENIS_DOK_IN/2','','60','600')">
-                    <i class="icon md-search"></i>
-                  </button>
                 </div>
               </div>
               <div class="form-group form-material">
