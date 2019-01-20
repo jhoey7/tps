@@ -23,7 +23,7 @@ class M_home extends CI_Model {
 			if(password_verify($pwd_, $rs->PASSWORD)) {
 				if($rs->KD_STATUS != 'ACTIVE') {
 					return 0;
-				}else{
+				}else{ 
 					$sql = "SELECT A.WK_REKAM, ADDDATE(A.WK_REKAM, INTERVAL 3 MONTH) AS NEXT_3_MONTH, NOW() AS WK_NOW
 							FROM app_user A
 							WHERE DATE(NOW()) <= ADDDATE(DATE(A.WK_REKAM), INTERVAL 3 MONTH)
