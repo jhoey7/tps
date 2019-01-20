@@ -91,28 +91,16 @@
   <div>&nbsp;</div>
   <div class="nav nav-tabs-horizontal nav-tabs-inverse nav-tabs-animate">
     <ul class="nav nav-tabs nav-tabs" data-plugin="nav-tabs" role="tablist">
-      <li class="active" role="presentation">
-        <a data-toggle="tab" href="#kontainer" aria-controls="kontainer" role="tab">
-            <i class="icon md-view-list margin-0" aria-hidden="true"></i> KONTAINER
-        </a>
-      </li>
-      <?php if(set_setting('SETDATAKEMASAN') == 'Y'): ?>
-      <li role="presentation" class="">
+      <li role="presentation" class="active">
         <a data-toggle="tab" href="#kemasan" aria-controls="kemasan"role="tab">
             <i class="icon md-widgets margin-0" aria-hidden="true"></i> KEMASAN
         </a>
       </li>
-      <?php endif; ?>
     </ul>
     <div class="tab-content">
-      <div class="tab-pane active animation-slide-top" id="kontainer" role="tabpanel">
-        <?php echo $table_kontainer; ?>
-      </div>
-      <?php if(set_setting('SETDATAKEMASAN') == 'Y'): ?>
-      <div class="tab-pane animation-slide-top" id="kemasan" role="tabpanel">
+      <div class="tab-pane active animation-slide-top" id="kemasan" role="tabpanel">
         <?php echo $table_kemasan; ?>
       </div>
-      <?php endif; ?>
     </div>
   </div>
 </div>

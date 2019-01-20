@@ -1,6 +1,8 @@
 <div class="panel">
   <div class="ribbon ribbon-clip ribbon-primary"> <span class="ribbon-inner"> <i class="icon md-view-list margin-0" aria-hidden="true"></i> <?php echo $title; ?> </span> </div>
+  <?php if($action == "update") { ?>
   <button type="submit" class="btn btn-sm btn-primary navbar-right navbar-btn waves-effect waves-light" onclick="save_post('form_kms','divtblkemasan'); return false;"> <i class="icon md-badge-check"></i> SAVE </button>
+  <?php } ?>
   <div>&nbsp;</div>
   <div>&nbsp;</div>
   <div>&nbsp;</div>

@@ -188,8 +188,10 @@ class M_coarri extends CI_Model {
 				INNER JOIN t_cocostshdr D ON D.ID=A.ID
 				LEFT JOIN reff_kapal E ON E.ID=D.KD_KAPAL
 				WHERE D.KD_ASAL_BRG = '3'".$addsql;
-		$proses = array('DETAIL' => array('GET',site_url()."/coarri/loading/detail", '1','','md-zoom-in'),
-						'UPLOAD' => array('ADD',site_url()."/coarri/loading/upload", '','','md-attachment'));
+		$proses = array(
+			'DETAIL' => array('GET',site_url()."/coarri/loading/detail", '1','','md-zoom-in'),
+			// 'UPLOAD' => array('ADD',site_url()."/coarri/loading/upload", '','','md-attachment')
+		);
 		$this->newtable->multiple_search(true);
 		$this->newtable->show_chk($check);
 		$this->newtable->show_menu($check);

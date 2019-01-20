@@ -96,21 +96,7 @@ class Codeco extends CI_Controller {
 			return;
 		}
 		$id = ($id!="")?$id:$this->input->post('id');
-		if($act=="detail"){
-			$this->newtable->breadcrumb('Home', site_url());
-			$this->newtable->breadcrumb('Pergerakan Barang', 'javascript:void(0)');
-			$this->newtable->breadcrumb('Barang Impor', 'javascript:void(0)');
-			$this->newtable->breadcrumb('Gate Out', site_url('codeco/gateout'));
-			$this->newtable->breadcrumb('Detail', 'javascript:void(0)');
-			$data['title'] = 'DETAIL GATE OUT';
-			$data['id'] = $id;
-			$this->load->model("m_execute");
-			$data['arrdata'] = $this->m_execute->get_data('kapal', $id);
-			$data['table_kontainer'] = $this->gateout_kontainer($act,$id);
-			$data['table_kemasan'] = $this->gateout_kemasan($act,$id);
-			$this->content = $this->load->view('content/codeco/impor/gateout-detail',$data,true);
-			$this->index();
-		}else if($act=="update"){
+		if(in_array($act, array("update","detail"))) {
 			$this->newtable->breadcrumb('Home', site_url());
 			$this->newtable->breadcrumb('Pergerakan Barang', 'javascript:void(0)');
 			$this->newtable->breadcrumb('Barang Impor', 'javascript:void(0)');
@@ -122,9 +108,9 @@ class Codeco extends CI_Controller {
 			$data['arr_angkutan'] = $this->m_popup->get_combobox('sarana_angkut');
 			$data['title'] = 'GATE OUT KEMASAN';
 			$data['id'] = $id;
-			$data['action'] = 'update';
+			$data['action'] = $act;
 			echo $this->load->view('content/codeco/impor/gateout-kemasan',$data,true);
-		}else{
+		} else {
 			$this->load->model("m_codeco");
 			$arrdata = $this->m_codeco->gateout($act, $id);
 			$data = $this->load->view('content/newtable', $arrdata, true);
@@ -133,41 +119,6 @@ class Codeco extends CI_Controller {
 			}else{
 				$this->content = $data;
 				$this->index();
-			}
-		}
-	}
-	
-	public function gateout_kemasan($act,$id){
-		if (!$this->session->userdata('LOGGED')){
-			$this->index();
-			return;
-		}
-		$id = ($id!="")?$id:$this->input->post('id');
-		if($act=="update"){
-			$arrid = explode('~',$id); 
-			$this->load->model('m_popup');
-			$this->load->model('m_execute');
-			$data['title'] = 'GATE OUT - KEMASAN';
-			$data['id'] = $id;
-			$data['post'] = $arrid[0];
-			$data['action'] = 'update';
-			$data['arr_angkut'] = $this->m_popup->get_combobox('sarana_angkut');
-			$data['arrdata'] = $this->m_execute->get_data('kemasan', $id);
-			echo $this->load->view('content/codeco/impor/gateout-kemasan',$data,true);
-		}else if($act=="detail-kemasan"){	
-			$arrid = explode('~',$id); 
-			$this->load->model('m_execute');
-			$data['title'] = 'DETAIL DISCHARGE - KEMASAN';
-			$data['arrdata'] = $this->m_execute->get_data('kemasan', $id);
-			echo $this->load->view('content/codeco/impor/gateout-kemasan-detail',$data,true);
-		}else{
-			$this->load->model("m_codeco");
-			$arrdata = $this->m_codeco->gateout_kemasan($act, $id);
-			$data = $this->load->view('content/newtable', $arrdata, true);
-			if($this->input->post("ajax")||$act=="post"){
-				return $arrdata;
-			}else{
-				return $data;
 			}
 		}
 	}

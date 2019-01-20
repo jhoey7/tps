@@ -31,7 +31,10 @@ class M_codeco extends CI_Model {
 				LEFT JOIN reff_kapal E ON E.ID=D.KD_KAPAL
 				WHERE D.KD_ASAL_BRG = '2'
 				AND A.WK_IN IS NOT NULL AND A.WK_IN <> ''".$addsql;
-		$proses = array('GATE OUT' => array('MODAL',"codeco/gateout/update", '1','','md-undo','90','1'));
+		$proses = array(
+			'GATE OUT' 	=> array('MODAL',"codeco/gateout/update", '1','','md-undo','90','1'),
+			'DETAIL' 	=> array('MODAL',"codeco/gateout/detail", '1','','md-zoom-in','90','1')
+		);
 		$this->newtable->show_chk(true);
 		$this->newtable->multiple_search(true);
 		$this->newtable->show_search(true);
@@ -53,57 +56,6 @@ class M_codeco extends CI_Model {
 		$arrdata = array("page_title" => $page_title, "title" => $title, "content" => $tabel);
 		if($this->input->post("ajax")||$act == "post")
 			return $tabel;
-		else
-			return $arrdata;
-	}
-	
-	public function gateout_kemasan($act,$id){
-		$page_title = "GATE OUT - KEMASAN";
-		$title = "";
-		$KD_TPS = $this->session->userdata('KD_TPS');
-		$KD_GUDANG = $this->session->userdata('KD_GUDANG');
-		$check = (grant()=="W")?true:false;
-		if($KD_GROUP!="SPA"){
-			$addsql .= " AND B.KD_TPS = ".$this->db->escape($KD_TPS)." AND B.KD_GUDANG = ".$this->db->escape($KD_GUDANG);
-		}
-		if(!$this->input->post('ajax')){
-			$addsql .= " AND A.WK_OUT >= DATE_ADD(CURDATE(), INTERVAL -7 DAY)";
-		}
-		$SQL = "SELECT CONCAT('JUMLAH : ',A.JUMLAH,'<BR>BRUTO : ',A.BRUTO,'<BR>',
-				func_name(A.KD_KEMASAN,'KEMASAN'),' [',A.KD_KEMASAN,']') AS KEMASAN,
-				CONCAT('NO. ',IFNULL(NO_MASTER_BL_AWB,'-'),'<BR>TGL. ',IFNULL(DATE_FORMAT(A.TGL_MASTER_BL_AWB,'%d-%m-%Y'),'-')) AS 'MASTER BL/AWB',
-				CONCAT('NO. ',IFNULL(NO_BL_AWB,'-'),'<BR>TGL. ',IFNULL(DATE_FORMAT(A.TGL_BL_AWB,'%d-%m-%Y'),'-')) AS 'BL/AWB',
-				A.NO_POS_BC11 AS 'POS BC11', C.NAMA AS CONISGNEE,
-				DATE_FORMAT(IFNULL(A.WK_IN,'-'),'%d-%m-%Y %H:%i:%s') AS 'DISCHARGE',
-				DATE_FORMAT(IFNULL(A.WK_OUT,'-'),'%d-%m-%Y %H:%i:%s') AS 'GATE OUT',
-				A.WK_REKAM AS 'WAKTU REKAM', A.ID, A.SERI, 'CODECO/GATEOUT_KEMASAN' AS POST
-				FROM t_cocostskms A
-				INNER JOIN t_cocostshdr B ON B.ID=A.ID
-				LEFT JOIN t_organisasi C ON C.ID=A.KD_ORG_CONSIGNEE
-				WHERE A.WK_IN IS NOT NULL AND A.ID = ".$this->db->escape($id).$addsql;
-		$proses = array('UPDATE' => array('MODAL',"codeco/gateout_kemasan/update", '1','','md-redo','','1'));
-		$this->newtable->show_chk($check);
-		$this->newtable->show_menu($check);
-		$this->newtable->multiple_search(true);
-		$this->newtable->show_search(true);
-		$this->newtable->search(array(array('A.NO_MASTER_BL_AWB', 'MASTER BL/AWB'),array('A.NO_BL_AWB', 'BL/AWB')));
-		$this->newtable->action(site_url() . "/codeco/gateout_kemasan/".$act."/".$id);
-		if($check) $this->newtable->detail(array('POPUP',"codeco/gateout_kemasan/detail-kemasan"));
-		$this->newtable->tipe_proses('button');
-		$this->newtable->hiddens(array("ID","SERI","POST"));
-		$this->newtable->keys(array("ID","SERI","POST"));
-		$this->newtable->cidb($this->db);
-		$this->newtable->orderby(10);
-		$this->newtable->sortby("DESC");
-		$this->newtable->set_formid("tblkemasan");
-		$this->newtable->set_divid("divtblkemasan");
-		$this->newtable->rowcount('10');
-		$this->newtable->clear();
-		$this->newtable->menu($proses);
-		$tabel .= $this->newtable->generate($SQL);
-		$arrdata = array("title" => $judul, "content" => $tabel);
-		if($this->input->post("ajax")||$act=="post")
-			echo $tabel;
 		else
 			return $arrdata;
 	}
