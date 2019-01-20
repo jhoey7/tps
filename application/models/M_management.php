@@ -216,7 +216,7 @@ class M_management extends CI_Model {
 					$DATA['KD_STATUS'] = strtoupper($DATA['KD_STATUS']);
 					$DATA['KETERANGAN'] = strtoupper($DATA['KETERANGAN']);
 					$DATA['PATH'] = $path;
-					$DATA['PASSWORD'] = md5($DATA['PASSWORD']);
+					$DATA['PASSWORD'] = password_hash($DATA['PASSWORD'], PASSWORD_BCRYPT);
 					$result = $this->db->insert('app_user', $DATA);
 					if(!$result){
 						$error += 1;
