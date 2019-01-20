@@ -220,7 +220,7 @@ class M_management extends CI_Model {
 					$result = $this->db->insert('app_user', $DATA);
 					if(!$result){
 						$error += 1;
-						$message = "Error, Gagal insert.";
+						$message = "Error, Gagal insert";
 					}
 				}
                 if($error==0){
