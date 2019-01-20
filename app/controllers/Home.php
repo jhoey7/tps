@@ -73,11 +73,13 @@ class Home extends CI_Controller {
 			//if(strtolower($code)===$_SESSION['captkodex'])
 			if(strtolower('erik')==='erik'){
 				$this->load->model('m_home');
-				$result = $this->m_home->signin($uid, md5($pwd));
-				if($result > 0){
-					if($result==2){
+				$result = $this->m_home->signin($uid, $pwd);
+				if($result > 0) {
+					if($result==2) {
 						$returnData = "1|Login berhasil, silahkan mengganti password|".$this->get_next_link($result);
-					}else{
+					} elseif($result==3) {
+						$returnData = "0|Password tidak valid.";
+					} else {
 						$returnData = "1|Login berhasil|".$this->get_next_link($result);
 					}
 				}else{ 
