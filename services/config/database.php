@@ -4,8 +4,8 @@ $active_group = 'default';
 $active_record = TRUE;
 
 $db['default']['hostname'] = 'localhost';
-$db['default']['username'] = 'elwilis';
-$db['default']['password'] = '3m51tpr0';
+$db['default']['username'] = 'root';
+$db['default']['password'] = '';
 $db['default']['port'] 	   = 1110;
 $db['default']['database'] = 'tpsonline_kms';
 $db['default']['dbdriver'] = 'mysqli';
