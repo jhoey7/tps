@@ -7,7 +7,7 @@ class Coarri extends CI_Controller {
         parent::__construct();
     }
 	
-	public function index(){		
+	public function index() {		
 		#Stylesheets
 		$headers  = '<link rel="stylesheet" href="'.base_url().'assets/css/bootstrap.min.css?v2.1.0">';
 		$headers .= '<link rel="stylesheet" href="'.base_url().'assets/css/bootstrap-extend.min.css?v2.1.0">';
@@ -73,7 +73,7 @@ class Coarri extends CI_Controller {
 		$footers .= '<script src="'.base_url().'assets/vendor/toastr/toastr.min.js"></script>';
 		$footers .= '<script src="'.base_url().'assets/js/components/input-group-file.min.js"></script>';
 		
-		if($this->session->userdata('LOGGED')){
+		if($this->session->userdata('LOGGED')) {
 			if($this->content==""){
 				redirect(site_url());
 			}
@@ -86,7 +86,7 @@ class Coarri extends CI_Controller {
 						  '_footers_' 	  => $footers,
 						  '_footer_' 	  => $this->load->view('content/footer','',true));
 			$this->parser->parse('index', $data);
-		}else{
+		} else {
 			redirect(base_url('index.php'));	
 		}
 	}
