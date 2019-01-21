@@ -7,7 +7,7 @@ class Codeco extends CI_Controller {
         parent::__construct();
     }
 	
-	public function index(){		
+	public function index() {		
 		#Stylesheets
 		$headers .= '<link rel="stylesheet" href="'.base_url().'assets/css/bootstrap.min.css?v2.1.0">';
 		$headers .= '<link rel="stylesheet" href="'.base_url().'assets/css/bootstrap-extend.min.css?v2.1.0">';
@@ -90,7 +90,7 @@ class Codeco extends CI_Controller {
 		}
 	}
 	
-	public function gateout($act,$id){
+	public function gateout($act,$id) {
 		if (!$this->session->userdata('LOGGED')){
 			$this->index();
 			return;
