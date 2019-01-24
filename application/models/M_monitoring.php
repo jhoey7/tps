@@ -81,17 +81,13 @@ class M_monitoring extends CI_Model {
         if($KD_GROUP!="SPA"){
 			//$addsql .= " AND (A.KD_ORG_SENDER = ".$this->db->escape($ID_ORG)." OR A.KD_ORG_RECEIVER = ".$this->db->escape($ID_ORG).")";
 		}
-		$SQL = "SELECT CONCAT('[',A.KD_APRF,']<BR>',E.NAMA) AS APRF, A.STR_DATA AS DATA,
-				D.NAMA AS STATUS, A.TGL_STATUS AS 'TGL. STATUS', A.ID
+		$SQL = "SELECT CONCAT('[',A.KD_APRF,']<BR>',E.NAMA) AS APRF, A.DOKUMEN, A.STR_DATA AS DATA,
+				A.STATUS,A.TGL_STATUS AS 'TGL. STATUS', A.ID
 				FROM mailbox A
-				LEFT JOIN t_organisasi B ON B.ID=A.KD_ORG_SENDER
-				LEFT JOIN t_organisasi C ON C.ID=A.KD_ORG_RECEIVER
-				LEFT JOIN reff_status D ON D.ID=A.KD_STATUS AND D.KD_TIPE_STATUS='MAILBOX'
 				LEFT JOIN app_aprf E ON E.ID=A.KD_APRF
 				WHERE 1=1".$addsql;
         $proses = array('');
-		// $arr_aprf = $this->get_combobox('aprf');
-		$arr_sts = array(""=>"","100"=>"RECEIVED","200"=>"BERHASIL PARSING","500"=>"GAGAL PARSING");
+		$arr_sts = array(""=>"","READ"=>"READ","UNREAD"=>"UNREAD");
 		$this->newtable->search(array(array('A.TGL_STATUS','TGL. STATUS','DATERANGE'),array('A.STR_DATA','DATA'),array('A.KD_STATUS','STATUS','OPTION',$arr_sts)));
         $this->newtable->action(site_url() . "/monitoring/mailbox");
         $this->newtable->hiddens(array("ID"));
