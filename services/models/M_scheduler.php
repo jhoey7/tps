@@ -245,7 +245,7 @@ class M_scheduler extends CI_Model {
 						$response = $client->call($method,$param);
 						if(count($response) > 0){
 							$resData = $response[$method.'Result'];
-							$this->db->insert('t_mailbox',array('KD_APRF' => 'GETIMPORSPPB', 'DOKUMEN' => 'SPPB', 'STR_DATA' => $resData, 'STATUS' => 'UNREAD', 'TGL_STATUS' => date('Y-m-d H:i:s')));
+							$this->db->insert('mailbox',array('KD_APRF' => 'GETIMPORSPPB', 'DOKUMEN' => 'SPPB', 'STR_DATA' => $resData, 'STATUS' => 'UNREAD', 'TGL_STATUS' => date('Y-m-d H:i:s')));
 							echo $resData; die();
 						}
 					}
